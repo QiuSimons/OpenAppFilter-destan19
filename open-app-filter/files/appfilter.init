@@ -15,6 +15,9 @@ service_triggers()
 stop_service(){
 	killall -9 oafd
 	rmmod oaf
+	uci set firewall.@defaults[0].fullcone='1'
+	uci set firewall.@defaults[0].flow_offloading='1'
+	uci commit firewall
 }
 
 start_service(){
@@ -37,6 +40,9 @@ start_service(){
 			ln -s /etc/appfilter/app_class.txt $CLASS_FILE
 		fi
 	fi
+	uci del firewall.@defaults[0].fullcone
+	uci del firewall.@defaults[0].flow_offloading
+	uci commit firewall
 	gen_class.sh /tmp/feature.cfg
 	insmod oaf
 	/usr/bin/oaf_rule reload
